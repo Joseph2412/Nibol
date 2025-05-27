@@ -3,6 +3,9 @@ import {useState} from "react";
 import {useRouter} from "next/router";
 
 export default function SignupPage() {
+
+  const router = useRouter();
+
     //Creiamo le costanti da richiamare nel form
     //Tutte a stato VUOTO
     const [firstName, setFirstName] = useState("");
@@ -14,24 +17,38 @@ export default function SignupPage() {
     //Tranne lei: Sarà un checkbox che a default e false.
     //L'utente deve accettare i termini, non tu.
     
-    const [error, setError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [termsError, setTermsError] = useState("");
 
     const handleSingup = (e) => {
         e.preventDefault();
+
+        setPasswordError("");
+        setTermsError("");
         
-        if(password.length < 6){
-            setError("Impegnati Diamine!");
-            return;
+      let hasError = false;
+      //Inizializziamo la variabile per lagestione dell'errore personalizzato
+
+        if(password === ""){
+          setPasswordError("Passowrd Obbligatoria");
+          hasError = true;
+        }else if(password.length < 6){
+            setPasswordError("Impegnati Diamine! Scrivi almeno 6 Caratteri"); 
+            hasError = true;
         }
 
+
+
         if(!acceptTerms){
-            setError("You Must Accept Terms and Condition to Proceed.");
-            return;
+            setTermsError("You Must Accept Terms and Condition to Proceed.");
+            hasError = true;
         }
+
+        if(hasError) return;
 
         localStorage.setItem("email", email);
         localStorage.setItem("isLogged", "true");
-        Router.push("/dashboard");
+        router.push("/dashboard");
     };
     
   return (
@@ -77,19 +94,20 @@ export default function SignupPage() {
                 className="w-full border p-2 mb-4 rounded"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
+
             />
-            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            {passwordError && <p className="text-red-500 text-sm mb-2">{passwordError}</p>}
 
             <div className="flex items-center mb-4">
             <input
+                id="terms"
                 type="checkbox"
                 className="mr-2"
                 checked={acceptTerms}
                 onChange={(e) => setAcceptTerms(e.target.checked)}
             />
-            <label className="text-sm">I Accept terms and conditions</label>
-            {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+            <label htmlFor="terms" className="text-sm">I Accept terms and conditions</label>
+            {termsError && <p className="text-red-500 text-sm mb-2">{termsError}</p>}
             </div>
             
             <button
