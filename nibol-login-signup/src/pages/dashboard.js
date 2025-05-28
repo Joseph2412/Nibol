@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useAuth } from "@/context/AuthContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 
@@ -8,16 +8,25 @@ export default function DashboardPage() {
     
     const {userEmail , logout} = useAuth();   
     const router = useRouter();
+    const [isChecking, setIsChecking] = useState(true);
 
-    useEffect(()=>{
+  useEffect(() => {
+    if (userEmail === null) {
+      // aspetta il primo caricamento del context
+      const isLogged = localStorage.getItem("isLogged");
+      const email = localStorage.getItem("email");
 
-      if (!userEmail){
+      if (isLogged === "true" && email) {
+        return setIsChecking(false); // tutto ok
+      } else {
         router.push("/login");
-      } //Controllo se presente in localStorage isLogged
-      //Basilare MIDDLEWARE
-    }, [userEmail]);
+      }
+    } else {
+      setIsChecking(false); // utente valido
+    }
+  }, [userEmail]);
 
-    if (!userEmail) return null;
+  if (isChecking) return null; 
 
     const handleBack = () => {
         router.back();
@@ -26,7 +35,7 @@ export default function DashboardPage() {
 
     const handleLogout = () =>{
       logout();
-      router.push("/singup");
+      router.push("/login");
     };
 
   return (
