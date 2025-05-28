@@ -41,7 +41,7 @@ src/
 ## Come Eseguire la demo
 
 Clonare la repo
-git clone https://github.com/tuo-utente/nibol-auth-demo.git
+git clone ***Link repo***
 cd nibol-auth-demo
 
 Installa le dipendenze
